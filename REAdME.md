@@ -159,3 +159,15 @@ or
 ```bash
 $ sudo docker-compose up --build
 ```
+#### Variável de Ambiente:Environment
+<p>
+Para definir variáveis de ambiente dentro do container usa-se environment
+</p>
+```.yml
+   version: '3'
+    services:
+        webapp:
+            build: ./dir 
+            environment:
+              POSTGRES_PASSWORD: root             
+```
