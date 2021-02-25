@@ -1,0 +1,10 @@
+version: '3'
+services: 
+  nodejs:
+    image: andreaquilau/nodejs
+    volumes: 
+      - .:/workspace
+    ports: 
+      - "22"
+      - "5000"
+    command: /usr/sbin/sshd -D
