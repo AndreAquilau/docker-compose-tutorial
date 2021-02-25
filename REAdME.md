@@ -152,22 +152,126 @@ Rodando o comando docker-compose build ele irá acessar o arquivo Dockerfile <br
 e recriar a imagem para o serviço. 
 <p>
 
+##### New Image
 ```bash
 $ sudo docker-compose build
 ```
 or
-```bash
+##### New Image And Up Service => used
+```bash 
 $ sudo docker-compose up --build
 ```
 #### Variável de Ambiente:Environment
-<p>
 Para definir variáveis de ambiente dentro do container usa-se environment
+```.yml 
+version: '3' 
+  services: 
+    webapp: 
+      build: ./dir 
+      environment: 
+      POSTGRES_PASSWORD: root 
+```
+
+#### Depends Services depends_on 
+<p>
+Usar depends_on quando tiver um service que precise de um outro service.
 </p>
-```.yml
-   version: '3'
-    services:
-        webapp:
-            build: ./dir 
-            environment:
-              POSTGRES_PASSWORD: root             
+
+```.yml 
+version: '3' 
+  services: 
+    nodejs:
+      image: andreaquilau/nodejs
+      volumes: 
+        - .:/workspace
+      ports: 
+        - "22"
+        - "5000"
+      depends_on:
+        - db
+      command: /usr/sbin/sshd -D
+    
+    db:
+      image: postgres
+      restart: always
+      environment:
+        POSTEGRES_PASSWORD: mysecretpassword
+      ports:
+        - "5432"
+      
+```
+#### Docker Compose NetWork
+> networks: 
+
+<br>
+
+>  - servidor
+```.yml 
+version: '3' 
+services: 
+    nodejs:
+      image: andreaquilau/nodejs
+      volumes: 
+        - .:/workspace
+      ports: 
+        - "22"
+        - "5000"
+      depends_on:
+        - db
+      ## set network in container
+      networks:
+        - servidor
+      command: /usr/sbin/sshd -D
+    
+    db:
+      image: postgres
+      restart: always
+      environment:
+        POSTEGRES_PASSWORD: mysecretpassword
+      ports:
+        - "5432"     
+      ## set network in container
+      networks:
+        - servidor
+## declared network
+networks:
+  servidor
+```
+##### Alias For NetWork
+```.yml 
+version: '3' 
+services: 
+    nodejs:
+      image: andreaquilau/nodejs
+      volumes: 
+        - .:/workspace
+      ports: 
+        - "22"
+        - "5000"
+      depends_on:
+        - db
+      ## set network in container
+      networks:
+        servidor:
+          aliases:
+            - server
+
+
+      command: /usr/sbin/sshd -D
+    
+    db:
+      image: postgres
+      restart: always
+      environment:
+        POSTEGRES_PASSWORD: mysecretpassword
+      ports:
+        - "5432"     
+      ## set network in container
+      networks:
+        servidor:
+          aliases:
+            - server
+## declared network
+networks:
+  servidor
 ```
